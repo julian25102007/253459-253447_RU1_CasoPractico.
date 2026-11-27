@@ -36,6 +36,16 @@ class Departamento {
         }
         return null;
     }
+
+    void mostrarEmpleados() {
+        if (numEmpleados == 0) {
+            System.out.println("Este departamento no tiene empleados.");
+            return;
+        }
+        for (int i = 0; i < numEmpleados; i++) {
+            System.out.println(empleados[i].identificador + " - " + empleados[i].nombreCompleto);
+        }
+    }
 }
 
 class EncargadoRH {
@@ -72,32 +82,49 @@ public class Main {
 
         EncargadoRH rh = new EncargadoRH(departamentos);
         Scanner sc = new Scanner(System.in);
+        String seguir = "s";
 
-        System.out.println("Departamentos:");
-        for (int i = 0; i < departamentos.length; i++) {
-            System.out.println((i + 1) + ". " + departamentos[i].nombre);
-        }
+        while (seguir.equalsIgnoreCase("s")) {
+            System.out.println("Departamentos:");
+            for (int i = 0; i < departamentos.length; i++) {
+                System.out.println((i + 1) + ". " + departamentos[i].nombre + " (" + departamentos[i].ubicacion + ")");
+            }
 
-        System.out.print("Seleccione un departamento (1-5): ");
-        int opcion = sc.nextInt();
-        Departamento d = rh.buscarDepartamento(opcion);
-        if (d == null) {
-            System.out.println("Departamento no valido.");
-            sc.close();
-            return;
-        }
+            System.out.print("Seleccione un departamento (1-5): ");
+            int opcion = sc.nextInt();
+            Departamento d = rh.buscarDepartamento(opcion);
 
-        System.out.print("Identificador del empleado (5 digitos): ");
-        int id = sc.nextInt();
-        Empleado e = rh.consultarEmpleado(d, id);
+            if (d == null) {
+                System.out.println("Departamento no valido.");
+            } else {
+                System.out.println("1. Consultar empleado por identificador");
+                System.out.println("2. Ver todos los empleados del departamento");
+                System.out.print("Seleccione una opcion (1-2): ");
+                int accion = sc.nextInt();
 
-        if (e == null) {
-            System.out.println("Empleado no encontrado.");
-        } else {
-            System.out.println("Nombre: " + e.nombreCompleto);
-            System.out.println("Identificador: " + e.identificador);
-            System.out.println("Departamento: " + d.nombre);
-            System.out.println("Ubicacion: " + d.ubicacion);
+                if (accion == 1) {
+                    System.out.print("Identificador del empleado (5 digitos): ");
+                    int id = sc.nextInt();
+                    Empleado e = rh.consultarEmpleado(d, id);
+
+                    if (e == null) {
+                        System.out.println("Empleado no encontrado.");
+                    } else {
+                        System.out.println("Nombre: " + e.nombreCompleto);
+                        System.out.println("Identificador: " + e.identificador);
+                        System.out.println("Departamento: " + d.nombre);
+                        System.out.println("Ubicacion: " + d.ubicacion);
+                    }
+                } else if (accion == 2) {
+                    System.out.println("Empleados de " + d.nombre + ":");
+                    d.mostrarEmpleados();
+                } else {
+                    System.out.println("Opcion no valida.");
+                }
+            }
+
+            System.out.print("¿Hacer otra consulta? (s/n): ");
+            seguir = sc.next();
         }
 
         sc.close();
