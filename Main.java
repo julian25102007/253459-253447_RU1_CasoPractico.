@@ -68,6 +68,14 @@ class EncargadoRH {
 }
 
 public class Main {
+    static int leerEntero(Scanner sc) {
+        while (!sc.hasNextInt()) {
+            sc.next();
+            System.out.print("Escriba un numero valido: ");
+        }
+        return sc.nextInt();
+    }
+
     public static void main(String[] args) {
         Departamento[] departamentos = new Departamento[5];
         departamentos[0] = new Departamento("Ventas", "Oficina central");
@@ -91,7 +99,7 @@ public class Main {
             }
 
             System.out.print("Seleccione un departamento (1-5): ");
-            int opcion = sc.nextInt();
+            int opcion = leerEntero(sc);
             Departamento d = rh.buscarDepartamento(opcion);
 
             if (d == null) {
@@ -100,11 +108,11 @@ public class Main {
                 System.out.println("1. Consultar empleado por identificador");
                 System.out.println("2. Ver todos los empleados del departamento");
                 System.out.print("Seleccione una opcion (1-2): ");
-                int accion = sc.nextInt();
+                int accion = leerEntero(sc);
 
                 if (accion == 1) {
                     System.out.print("Identificador del empleado (5 digitos): ");
-                    int id = sc.nextInt();
+                    int id = leerEntero(sc);
                     Empleado e = rh.consultarEmpleado(d, id);
 
                     if (e == null) {
