@@ -46,6 +46,9 @@ class EncargadoRH {
     }
 
     Departamento buscarDepartamento(int opcion) {
+        if (opcion < 1 || opcion > departamentos.length) {
+            return null;
+        }
         return departamentos[opcion - 1];
     }
 
@@ -78,6 +81,11 @@ public class Main {
         System.out.print("Seleccione un departamento (1-5): ");
         int opcion = sc.nextInt();
         Departamento d = rh.buscarDepartamento(opcion);
+        if (d == null) {
+            System.out.println("Departamento no valido.");
+            sc.close();
+            return;
+        }
 
         System.out.print("Identificador del empleado (5 digitos): ");
         int id = sc.nextInt();
