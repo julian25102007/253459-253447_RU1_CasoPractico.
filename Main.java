@@ -68,6 +68,8 @@ class EncargadoRH {
 }
 
 public class Main {
+    static final int NUM_DEPARTAMENTOS = 5;
+
     static int leerEntero(Scanner sc) {
         while (!sc.hasNextInt()) {
             sc.next();
@@ -76,64 +78,87 @@ public class Main {
         return sc.nextInt();
     }
 
-    public static void main(String[] args) {
-        Departamento[] departamentos = new Departamento[5];
+    static Departamento[] crearDepartamentos() {
+        Departamento[] departamentos = new Departamento[NUM_DEPARTAMENTOS];
         departamentos[0] = new Departamento("Ventas", "Oficina central");
         departamentos[1] = new Departamento("Finanzas", "Sucursal");
         departamentos[2] = new Departamento("Sistemas", "Oficina central");
         departamentos[3] = new Departamento("Compras", "Sucursal");
         departamentos[4] = new Departamento("Logistica", "Sucursal");
+        return departamentos;
+    }
 
-        departamentos[0].agregarEmpleado(new Empleado("Ana Lopez",25301));
-        departamentos[0].agregarEmpleado(new Empleado("Luis Perez", 25302));
-        departamentos[2].agregarEmpleado(new Empleado("Carlos Ruiz", 25303));
+    static void cargarEmpleadosDePrueba(Departamento[] departamentos) {
+        departamentos[0].agregarEmpleado(new Empleado("Ana Lopez", 10001));
+        departamentos[0].agregarEmpleado(new Empleado("Luis Perez", 10002));
+        departamentos[2].agregarEmpleado(new Empleado("Carlos Ruiz", 30001));
+    }
 
-        EncargadoRH rh = new EncargadoRH(departamentos);
-        Scanner sc = new Scanner(System.in);
+    static void mostrarDepartamentos(Departamento[] departamentos) {
+        System.out.println("Departamentos:");
+        for (int i = 0; i < departamentos.length; i++) {
+            System.out.println((i + 1) + ". " + departamentos[i].nombre + " (" + departamentos[i].ubicacion + ")");
+        }
+    }
+
+    static void consultarPorIdentificador(EncargadoRH rh, Departamento d, Scanner sc) {
+        System.out.print("Identificador del empleado (5 digitos): ");
+        int id = leerEntero(sc);
+        Empleado e = rh.consultarEmpleado(d, id);
+
+        if (e == null) {
+            System.out.println("Empleado no encontrado.");
+            return;
+        }
+        System.out.println("Nombre: " + e.nombreCompleto);
+        System.out.println("Identificador: " + e.identificador);
+        System.out.println("Departamento: " + d.nombre);
+        System.out.println("Ubicacion: " + d.ubicacion);
+    }
+
+    static void atenderDepartamento(EncargadoRH rh, Departamento d, Scanner sc) {
+        System.out.println("1. Consultar empleado por identificador");
+        System.out.println("2. Ver todos los empleados del departamento");
+        System.out.print("Seleccione una opcion (1-2): ");
+        int accion = leerEntero(sc);
+
+        if (accion == 1) {
+            consultarPorIdentificador(rh, d, sc);
+        } else if (accion == 2) {
+            System.out.println("Empleados de " + d.nombre + ":");
+            d.mostrarEmpleados();
+        } else {
+            System.out.println("Opcion no valida.");
+        }
+    }
+
+    static void ejecutarMenu(EncargadoRH rh, Departamento[] departamentos, Scanner sc) {
         String seguir = "s";
 
         while (seguir.equalsIgnoreCase("s")) {
-            System.out.println("Departamentos:");
-            for (int i = 0; i < departamentos.length; i++) {
-                System.out.println((i + 1) + ". " + departamentos[i].nombre + " (" + departamentos[i].ubicacion + ")");
-            }
-
-            System.out.print("Seleccione un departamento (1-5): ");
-            int opcion = leerEntero(sc);
-            Departamento d = rh.buscarDepartamento(opcion);
+            mostrarDepartamentos(departamentos);
+            System.out.print("Seleccione un departamento (1-" + NUM_DEPARTAMENTOS + "): ");
+            Departamento d = rh.buscarDepartamento(leerEntero(sc));
 
             if (d == null) {
                 System.out.println("Departamento no valido.");
             } else {
-                System.out.println("1. Consultar empleado por identificador");
-                System.out.println("2. Ver todos los empleados del departamento");
-                System.out.print("Seleccione una opcion (1-2): ");
-                int accion = leerEntero(sc);
-
-                if (accion == 1) {
-                    System.out.print("Identificador del empleado (5 digitos): ");
-                    int id = leerEntero(sc);
-                    Empleado e = rh.consultarEmpleado(d, id);
-
-                    if (e == null) {
-                        System.out.println("Empleado no encontrado.");
-                    } else {
-                        System.out.println("Nombre: " + e.nombreCompleto);
-                        System.out.println("Identificador: " + e.identificador);
-                        System.out.println("Departamento: " + d.nombre);
-                        System.out.println("Ubicacion: " + d.ubicacion);
-                    }
-                } else if (accion == 2) {
-                    System.out.println("Empleados de " + d.nombre + ":");
-                    d.mostrarEmpleados();
-                } else {
-                    System.out.println("Opcion no valida.");
-                }
+                atenderDepartamento(rh, d, sc);
             }
 
             System.out.print("¿Hacer otra consulta? (s/n): ");
             seguir = sc.next();
         }
+    }
+
+    public static void main(String[] args) {
+        Departamento[] departamentos = crearDepartamentos();
+        cargarEmpleadosDePrueba(departamentos);
+
+        EncargadoRH rh = new EncargadoRH(departamentos);
+        Scanner sc = new Scanner(System.in);
+
+        ejecutarMenu(rh, departamentos, sc);
 
         sc.close();
     }
